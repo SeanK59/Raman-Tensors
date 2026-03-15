@@ -224,12 +224,6 @@ input[type=range]::-webkit-slider-thumb {
   <div class="tensors-grid" id="tensor-display"></div>
 </div>
 
-<!-- ─── Parameters ─── -->
-<div class="card">
-  <h2>Tensor Parameters</h2>
-  <div class="params-row" id="params-grid"></div>
-</div>
-
 <!-- ─── Scattering geometry ─── -->
 <div class="card">
   <h2>Scattering Geometry</h2>
@@ -285,6 +279,12 @@ input[type=range]::-webkit-slider-thumb {
     </tr></thead>
     <tbody id="results-body"></tbody>
   </table>
+</div>
+
+<!-- ─── Parameters ─── -->
+<div class="card">
+  <h2>Tensor Parameters</h2>
+  <div class="params-row" id="params-grid"></div>
 </div>
 
 <!-- ─── Azimuthal plot ─── -->
@@ -1287,6 +1287,55 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
 /* ══════════════════════════════════════════════════════
    EVENT LISTENERS & INIT
 ══════════════════════════════════════════════════════ */
+/* Auto-fill ei and es when Ns changes.
+   For Ns=(a,b,c), picks the first non-zero candidate from
+   (b,-a,0), (-c,0,a), (0,c,-b) as ei, then es = Ns × ei. */
+function autoFillPolarizations() {
+  // Validate via parseVec (handles all input formats, checks for zero)
+  const nsVec = parseVec(document.getElementById('Ns-in').value);
+  if (!nsVec) return;
+  if (nsVec.some(([, im]) => Math.abs(im) > 1e-10)) return; // must be real
+
+  // Use raw (unnormalized) values so candidates stay integer-like when possible
+  let a, b, c;
+  const parts = document.getElementById('Ns-in').value.trim().split(/\s+/);
+  if (parts.length === 3 && parts.every(p => !isNaN(+p))) {
+    [a, b, c] = parts.map(Number);
+  } else {
+    // Compact form ("001" etc.): parseVec already gives normalized unit values
+    [a, b, c] = nsVec.map(([re]) => re);
+  }
+  if (a*a + b*b + c*c < 1e-20) return;
+
+  // Make first non-zero component positive (avoids unnecessary minus signs)
+  const signNorm = v => {
+    const s = v.find(x => Math.abs(x) > 1e-9);
+    return (s && s < 0) ? v.map(x => -x) : [...v];
+  };
+
+  // Pick first non-zero candidate perpendicular to Ns (raw, not normalized)
+  const candidates = [[b,-a,0], [-c,0,a], [0,c,-b]];
+  let ei = null;
+  for (const v of candidates) {
+    if (Math.hypot(v[0], v[1], v[2]) > 1e-10) { ei = signNorm(v); break; }
+  }
+  if (!ei) return;
+
+  // es = Ns × ei  (raw cross product, then sign-normalize)
+  let es = [b*ei[2]-c*ei[1], c*ei[0]-a*ei[2], a*ei[1]-b*ei[0]];
+  es = signNorm(es);
+
+  // Format as integer when possible, otherwise compact decimal
+  const fmt = x => {
+    if (Math.abs(x) < 1e-9) return '0';
+    const r = Math.round(x);
+    return Math.abs(x - r) < 1e-9 ? String(r) : String(Math.round(x * 1e6) / 1e6);
+  };
+  document.getElementById('ei-in').value = ei.map(fmt).join(' ');
+  document.getElementById('es-in').value = es.map(fmt).join(' ');
+}
+
+
 function onPGChange() {
   const pgKey = document.getElementById('pg-select').value;
   const pgEntry = PG_ALL[pgKey];
@@ -1317,7 +1366,11 @@ thetaSl.addEventListener('input', () => {
 });
 
 document.getElementById('pg-select').addEventListener('change', onPGChange);
-for (const id of ['Ns-in','ei-in','es-in']) {
+document.getElementById('Ns-in').addEventListener('input', () => {
+  autoFillPolarizations();
+  compute();
+});
+for (const id of ['ei-in','es-in']) {
   document.getElementById(id).addEventListener('input', compute);
 }
 
