@@ -6,102 +6,106 @@
 <title>Raman Tensor Calculator</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
+/* Shared site theme (matches seankung.ca) */
 :root {
-  --bg: #0d1117;
-  --card: #161b22;
-  --card2: #1c2230;
-  --accent: #1f3a6e;
-  --hl: #58a6ff;
+  --bg: #121212;
+  --card: #1e1e1e;
+  --card2: #181818;
+  --accent: #2a3a3a;
+  --hl: #80cbc4;
   --gold: #e3b341;
   --red: #f85149;
   --green: #3fb950;
   --teal: #39d353;
-  --text: #e6edf3;
-  --muted: #8b949e;
-  --border: #30363d;
-  --matrix-bg: #0d1b2a;
+  --text: #ffffff;
+  --muted: #ccc;
+  --border: #333;
+  --matrix-bg: #181818;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
 a { color: var(--hl); }
-a:hover { color: #79c0ff; text-decoration: underline; }
+a:hover { color: #a7dbd6; text-decoration: underline; }
 
 .container { max-width: 1280px; margin: 0 auto; padding: 20px 16px 60px; }
-h1 { font-size: 2.3rem; color: var(--hl); margin-bottom: 4px; letter-spacing: -0.5px; }
-.subtitle { color: var(--muted); font-size: 1.2rem; margin-bottom: 24px; }
-.subtitle code { background: var(--card2); padding: 1px 5px; border-radius: 4px; font-size: 1rem; }
+.home-link { font-size: 0.9rem; margin-bottom: 12px; }
+.home-link a { color: var(--hl); text-decoration: none; }
+.home-link a:hover { text-decoration: underline; }
+h1 { color: var(--text); margin-bottom: 4px; letter-spacing: -0.5px; text-align: center; }
+.subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 24px; text-align: center; }
+.subtitle code { background: var(--card2); padding: 1px 5px; border-radius: 3px; font-size: 1rem; }
 h2 { font-size: 1rem; color: var(--hl); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 18px 20px; margin-bottom: 14px; }
 
 /* ─── Point group selector ─── */
 .pg-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 select {
   background: var(--card2); color: var(--text); border: 1px solid var(--border);
-  padding: 7px 12px; border-radius: 7px; font-size: 1.3rem; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; cursor: pointer;
+  padding: 7px 12px; border-radius: 3px; font-size: 1rem; font-family: Arial, sans-serif; cursor: pointer;
   min-width: 320px;
 }
 select:focus { outline: none; border-color: var(--hl); }
-.pg-note { color: var(--muted); font-size: 1.1rem; font-style: italic; }
+.pg-note { color: var(--muted); font-size: 1rem; font-style: italic; }
 
 /* ─── Tensor display ─── */
 .tensors-grid { display: flex; flex-wrap: wrap; gap: 12px; }
 .irrep-block {
-  background: var(--matrix-bg); border: 1px solid var(--border); border-radius: 8px;
+  background: var(--matrix-bg); border: 1px solid var(--border); border-radius: 3px;
   padding: 12px 14px;
 }
 .irrep-label {
-  font-size: 1.3rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; text-align: center;
+  font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; text-align: center;
 }
 .partner-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .matrix-wrap { display: inline-flex; align-items: center; gap: 2px; }
-.mbr { font-size: 3.7rem; line-height: 1; color: var(--muted); user-select: none; font-weight: 100; }
+.mbr { font-size: 3.4rem; line-height: 1; color: var(--muted); user-select: none; font-weight: 100; }
 .mgrid {
   display: grid; grid-template-columns: repeat(3, 1fr);
   gap: 2px 10px; padding: 4px 6px;
-  font-size: 1.1rem; font-variant-numeric: tabular-nums;
+  font-size: 1rem; font-variant-numeric: tabular-nums;
 }
 .mc { text-align: right; min-width: 30px; color: var(--muted); white-space: nowrap; }
 .mc.nz { color: var(--gold); }
-.plus-lbl { color: var(--muted); font-size: 1.7rem; align-self: center; }
+.plus-lbl { color: var(--muted); font-size: 1.5rem; align-self: center; }
 
 /* ─── Parameters ─── */
 .params-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .pm {
   display: flex; align-items: center; gap: 6px;
-  background: var(--card2); border: 1px solid var(--border); padding: 5px 11px; border-radius: 7px;
+  background: var(--card2); border: 1px solid var(--border); padding: 5px 11px; border-radius: 3px;
 }
 .pm-label {
   font-style: italic; color: var(--gold);
-  min-width: 12px; text-align: center; font-size: 1.3rem;
+  min-width: 12px; text-align: center; font-size: 1.1rem;
 }
-.pm-eq { color: var(--muted); font-size: 1.1rem; }
+.pm-eq { color: var(--muted); font-size: 1rem; }
 .pm-input {
   background: transparent; color: var(--text); border: none;
   border-bottom: 1px solid var(--border); width: 58px; text-align: center;
-  padding: 2px; font-size: 1.2rem; font-variant-numeric: tabular-nums;
+  padding: 2px; font-size: 1rem; font-variant-numeric: tabular-nums;
 }
 .pm-input:focus { outline: none; border-bottom-color: var(--hl); }
 
 /* ─── Geometry ─── */
 .geo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
 .geo-item { display: flex; flex-direction: column; gap: 5px; }
-.geo-label { color: var(--muted); font-size: 1.1rem; }
+.geo-label { color: var(--muted); font-size: 1rem; }
 .geo-label strong { color: var(--text); font-style: italic; }
 .geo-input {
   background: var(--card2); color: var(--text); border: 1px solid var(--border);
-  padding: 7px 10px; border-radius: 7px;
-  font-size: 1.2rem; font-variant-numeric: tabular-nums;
+  padding: 7px 10px; border-radius: 3px;
+  font-size: 1rem; font-variant-numeric: tabular-nums;
   transition: border-color 0.15s;
 }
 .geo-input:focus { outline: none; border-color: var(--hl); }
 .geo-input.err { border-color: var(--red); }
-.geo-hint { color: var(--muted); font-size: 1rem; font-variant-numeric: tabular-nums; height: 1.4em; }
+.geo-hint { color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; height: 1.4em; }
 .geo-hint.ok { color: var(--green); }
 .theta-row { display: flex; align-items: center; gap: 8px; }
 .theta-row .geo-input { width: 80px; }
@@ -115,8 +119,8 @@ input[type=range]::-webkit-slider-thumb {
   border-radius: 50%; background: var(--hl); cursor: pointer;
 }
 .info-box {
-  background: rgba(88,166,255,0.07); border: 1px solid rgba(88,166,255,0.3);
-  border-radius: 7px; padding: 9px 13px; font-size: 1.1rem; color: var(--muted);
+  background: rgba(128,203,196,0.07); border: 1px solid rgba(128,203,196,0.3);
+  border-radius: 3px; padding: 9px 13px; font-size: 1rem; color: var(--muted);
   margin-top: 10px;
 }
 .info-box code { color: var(--text); background: var(--card2); padding: 1px 4px; border-radius: 3px; }
@@ -131,27 +135,27 @@ input[type=range]::-webkit-slider-thumb {
 .rtable tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .rtable tbody tr:last-child td { border-bottom: none; }
 .rtable tbody tr:hover td { background: rgba(255,255,255,0.02); }
-.irep-td { font-weight: 700; color: var(--gold); font-size: 1.4rem; }
-.intensity-td { font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+.irep-td { font-weight: 700; color: var(--gold); font-size: 1.2rem; }
+.intensity-td { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
 .bar-bg { background: var(--card2); border-radius: 4px; height: 14px; overflow: hidden; width: 180px; }
 .bar-fg { background: linear-gradient(90deg, var(--hl), var(--teal)); height: 100%; border-radius: 4px; transition: width 0.3s; }
-.pct-td { color: var(--muted); font-size: 1.1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.total-row td { background: rgba(88,166,255,0.08); font-weight: 700; color: var(--hl); }
-.err-msg { color: var(--red); font-size: 1.1rem; padding: 4px 0; }
+.pct-td { color: var(--muted); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.total-row td { background: rgba(128,203,196,0.08); font-weight: 700; color: var(--hl); }
+.err-msg { color: var(--red); font-size: 1rem; padding: 4px 0; }
 .formula-box {
-  background: var(--card2); border-radius: 7px; padding: 10px 14px;
-  font-size: 1.2rem; font-variant-numeric: tabular-nums; color: var(--muted);
+  background: var(--card2); border-radius: 3px; padding: 10px 14px;
+  font-size: 1rem; font-variant-numeric: tabular-nums; color: var(--muted);
   margin-top: 8px; word-break: break-all;
 }
 .results-hdr { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
 .results-hdr h2 { margin: 0; }
 .total-sym {
-  font-size: 1.3rem; color: var(--hl);
-  background: rgba(88,166,255,0.1); padding: 3px 12px; border-radius: 20px;
-  border: 1px solid rgba(88,166,255,0.3);
+  font-size: 1.1rem; color: var(--hl);
+  background: rgba(128,203,196,0.1); padding: 3px 12px; border-radius: 20px;
+  border: 1px solid rgba(128,203,196,0.3);
 }
 .sym-td {
-  font-size: 1.2rem; color: #c9d1d9;
+  font-size: 1rem; color: var(--muted);
   white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis;
 }
 .sym-zero { color: var(--muted); }
@@ -159,6 +163,8 @@ input[type=range]::-webkit-slider-thumb {
 </head>
 <body>
 <div class="container">
+
+<nav class="home-link"><a href="https://seankung.ca/">&larr; seankung.ca</a></nav>
 
 <h1>Raman Tensor Calculator</h1>
 
@@ -290,7 +296,7 @@ input[type=range]::-webkit-slider-thumb {
 <!-- ─── Azimuthal plot ─── -->
 <div class="card">
   <h2>Azimuthal Angle Dependence</h2>
-  <p style="color:var(--muted);font-size:1.1rem;margin-bottom:12px;">
+  <p style="color:var(--muted);font-size:1rem;margin-bottom:12px;">
     Raman intensity vs. rotation angle θ (−180° to 180°). Dashed vertical line = current θ.
     All other parameters fixed at current values.
   </p>
@@ -300,7 +306,7 @@ input[type=range]::-webkit-slider-thumb {
 <!-- ─── Notes ─── -->
 <div class="card">
   <h2>Notes</h2>
-  <p style="color:var(--muted);font-size:1.1rem;line-height:1.7;">
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     The goal of this calculator is to compute the contribution from each irreducible representations (irreps) given a set of
     scattering configurations in a Raman scattering experiment. In each experiment, the result depends on 3 things, what is
     the crystal symmetry, how the incident and scattered light polarization is oriented with respect to the crystalline
@@ -310,7 +316,7 @@ input[type=range]::-webkit-slider-thumb {
     The crystal symmetry dictates the forms of tensors M, the vectors ei and es are the polarization vectors of the incident and
     scattered light, respectively.<br><br>
   </p>
-  <p style="color:var(--muted);font-size:1.1rem;line-height:1.7;">
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     The Raman tensors used here were tabulated in Cardona's <em>Inelastic Light Scattering in Solids</em> Vol. 2 Ch. 2. The forms
     of Raman tensors depend only on the point groups of the crystal lattice, and not on the space groups. Moreover, some
     point groups share the same irreps that are Raman active [1]. For example, Oh, Td and O groups all have 4 Raman active
@@ -318,14 +324,14 @@ input[type=range]::-webkit-slider-thumb {
     of Oh group simply implies the existence of inversion symmetry, and does not change the forms of the Raman tensors of
     the two groups.<br><br>
   </p>
-  <p style="color:var(--muted);font-size:1.1rem;line-height:1.7;">
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     For each point group and scattering plane, there exist a set of light polarization combinations that allows clean
     isolation of contributions from each irreps. For example, backscattering from the (001) plane of a sample with D4h point
     group symmetry couples to A1g, A2g, B1g and B2g irreps. For a single scattering geometry, such as XX [2], it will couple
     to both A1g and B1g irreps. But if we acquire data from XX, XY, X'X', X'Y', RR, and RL, then we can isolate individual
     irreps, e.g., A1g = (XX+X'X'-RL)/2, and similarly for other irreps.<br><br>
   </p>
-  <p style="color:var(--muted);font-size:1.1rem;line-height:1.7;">
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     To use this calculator, follow these steps.<br>
     1, select the relevant point group symmetry.<br>
     2, define the crystal surface normal vector, Ns. This is only important if you want to study the azimuthal dependence.
@@ -334,7 +340,7 @@ input[type=range]::-webkit-slider-thumb {
     This calculates the composition of matrix elements in the defined configuration. For example, in the XX scattering
     geometry with X=(100) from crystal with Oh symmetry gives a^2+4b^2, that is A1g+4Eg1.<br><br>
   </p>
-  <p style="color:var(--muted);font-size:1.1rem;line-height:1.7;">
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     [1] These point groups may have other irreps that are not Raman active, which we will disregard here.<br>
     [2] The first index refers to the polarization of the incident photon. 
     In most cases, the result can be greatly simplified if the linear polarization is aligned with one of the crystal axes, 
@@ -342,7 +348,7 @@ input[type=range]::-webkit-slider-thumb {
     In this example here, X is aligned with (100), Y is naturally perpendicular to it, that is (010). 
     We then denote (110) as X', and (1-10) as Y', and R/L are circularly polarized.<br><br>
   </p>
-  <p style="color:var(--muted);font-size:1.1rem;line-height:1.7;">
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     Webpage maintained by <a href="mailto:sean.kung@ubc.ca">Sean Kung</a> at the University of British Columbia.
   </p>
 </div>
@@ -1190,8 +1196,8 @@ function compute() {
    PLOTLY AZIMUTHAL PLOT
 ══════════════════════════════════════════════════════ */
 const PLOT_COLORS = [
-  '#e3b341','#58a6ff','#3fb950','#f85149','#d2a8ff',
-  '#ff9c7d','#79c0ff','#7ee787','#ffa657','#db61a2'
+  '#80cbc4','#e3b341','#58a6ff','#3fb950','#f85149',
+  '#d2a8ff','#ff9c7d','#7ee787','#ffa657','#db61a2'
 ];
 
 function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
@@ -1252,30 +1258,30 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
   });
 
   const layout = {
-    paper_bgcolor: '#161b22',
-    font: { color: '#e6edf3', family: "Arial, 'Helvetica Neue', Helvetica, sans-serif", size: 14 },
+    paper_bgcolor: '#1e1e1e',
+    font: { color: '#ccc', family: "Arial, sans-serif", size: 14 },
     polar: {
-      bgcolor: '#0d1117',
+      bgcolor: '#121212',
       radialaxis: {
         visible: true,
-        gridcolor: '#30363d',
-        linecolor: '#30363d',
-        tickcolor: '#8b949e',
-        tickfont: { color: '#8b949e', size: 13 },
+        gridcolor: '#333',
+        linecolor: '#333',
+        tickcolor: '#aaa',
+        tickfont: { color: '#aaa', size: 13 },
         rangemode: 'tozero'
       },
       angularaxis: {
-        gridcolor: '#30363d',
-        linecolor: '#30363d',
-        tickcolor: '#8b949e',
-        tickfont: { color: '#8b949e', size: 13 },
+        gridcolor: '#333',
+        linecolor: '#333',
+        tickcolor: '#aaa',
+        tickfont: { color: '#aaa', size: 13 },
         direction: 'counterclockwise',
         rotation: 0,
         dtick: 30
       }
     },
     legend: {
-      bgcolor: 'rgba(0,0,0,0)', bordercolor: '#30363d',
+      bgcolor: 'rgba(0,0,0,0)', bordercolor: '#333',
       borderwidth: 1, font: { size: 13 }
     },
     margin: { t: 40, r: 20, b: 40, l: 20 }
