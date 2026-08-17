@@ -33,52 +33,126 @@ body {
 a { color: var(--hl); }
 a:hover { color: #a7dbd6; text-decoration: underline; }
 
-.container { max-width: 1280px; margin: 0 auto; padding: 20px 16px 60px; }
-.home-link { font-size: 0.9rem; margin-bottom: 12px; }
+.container { max-width: 1400px; margin: 0 auto; padding: 14px 16px 40px; }
+.home-link { font-size: 0.9rem; margin-bottom: 2px; }
 .home-link a { color: var(--hl); text-decoration: none; }
 .home-link a:hover { text-decoration: underline; }
-h1 { color: var(--text); margin-bottom: 4px; letter-spacing: -0.5px; text-align: center; }
-.subtitle { color: var(--muted); font-size: 1rem; margin-bottom: 24px; text-align: center; }
-.subtitle code { background: var(--card2); padding: 1px 5px; border-radius: 3px; font-size: 1rem; }
+h1 { color: var(--text); font-size: 1.5rem; margin-bottom: 8px; letter-spacing: -0.5px; text-align: center; }
 h2 { font-size: 1rem; color: var(--hl); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 18px 20px; margin-bottom: 14px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 3px; padding: 14px 16px; margin-bottom: 10px; }
+
+/* ─── Two-column rows ─── */
+.row2 { display: grid; gap: 10px; align-items: start; margin-bottom: 10px; }
+.row2 > .card { margin-bottom: 0; }
+.tensors-row { grid-template-columns: minmax(0, 1fr) 296px; }
+.results-row { grid-template-columns: minmax(0, 1fr) minmax(380px, 0.95fr); }
+.results-row .plot-card { position: sticky; top: 10px; }
+@media (max-width: 1000px) {
+  /* minmax(0,1fr), not 1fr: a bare 1fr track takes its automatic minimum from
+     min-content, which the nowrap point-group note would blow past. */
+  .tensors-row, .results-row { grid-template-columns: minmax(0, 1fr); }
+  .results-row .plot-card { position: static; }
+}
+
+/* ─── Card header row + info popover ─── */
+.hdr-row { position: relative; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.hdr-row h2 { margin: 0; }
+.info-btn {
+  flex: none; width: 19px; height: 19px; border-radius: 50%; padding: 0;
+  background: transparent; color: var(--hl); border: 1px solid var(--hl);
+  font: italic 700 12px/1 Georgia, "Times New Roman", serif; cursor: pointer;
+}
+.info-btn:hover { background: var(--hl); color: var(--bg); }
+
+/* ─── Small buttons + toggle switch ─── */
+.btn {
+  background: var(--card2); color: var(--hl); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 3px; font-size: 0.9rem;
+  font-family: Arial, sans-serif; cursor: pointer; white-space: nowrap;
+}
+.btn:hover { border-color: var(--hl); background: rgba(128,203,196,0.1); }
+.btn:active { background: rgba(128,203,196,0.2); }
+
+.tgl { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
+.tgl input { position: absolute; opacity: 0; width: 0; height: 0; }
+.tgl-track {
+  width: 30px; height: 16px; border-radius: 8px; background: var(--card2);
+  border: 1px solid var(--border); position: relative; transition: background 0.15s, border-color 0.15s;
+}
+.tgl-knob {
+  position: absolute; top: 1px; left: 1px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--muted); transition: transform 0.15s, background 0.15s;
+}
+.tgl input:checked + .tgl-track { background: rgba(128,203,196,0.25); border-color: var(--hl); }
+.tgl input:checked + .tgl-track .tgl-knob { transform: translateX(14px); background: var(--hl); }
+.tgl input:focus-visible + .tgl-track { outline: 2px solid var(--hl); outline-offset: 2px; }
+.tgl-lbl { color: var(--muted); font-size: 0.9rem; }
+.tgl input:checked ~ .tgl-lbl { color: var(--hl); }
+
+.params-note {
+  color: var(--muted); font-size: 0.85rem; font-style: italic;
+  margin-top: 8px; line-height: 1.4;
+}
+.params-note b { color: var(--gold); font-style: normal; font-weight: 400; }
+.params-note:empty { display: none; }
+.pop {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 50;
+  width: max-content; max-width: min(560px, 88vw);
+  background: var(--card2); border: 1px solid var(--hl); border-radius: 4px;
+  padding: 12px 14px; font-size: 1rem; color: var(--muted); line-height: 1.6;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.65); white-space: normal;
+}
+.pop[hidden] { display: none; }
+.pop code { color: var(--text); background: var(--card); padding: 1px 4px; border-radius: 3px; }
+.pop strong { color: var(--text); }
 
 /* ─── Point group selector ─── */
-.pg-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 select {
   background: var(--card2); color: var(--text); border: 1px solid var(--border);
-  padding: 7px 12px; border-radius: 3px; font-size: 1rem; font-family: Arial, sans-serif; cursor: pointer;
-  min-width: 320px;
+  padding: 6px 10px; border-radius: 3px; font-size: 1rem; font-family: Arial, sans-serif; cursor: pointer;
+  min-width: 210px;
 }
 select:focus { outline: none; border-color: var(--hl); }
-.pg-note { color: var(--muted); font-size: 1rem; font-style: italic; }
+/* Stays on the header's first line, truncating rather than forcing a second row */
+.pg-note {
+  color: var(--muted); font-size: 1rem; font-style: italic;
+  flex: 1 1 120px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 
 /* ─── Tensor display ─── */
-.tensors-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.tensors-grid { display: flex; flex-wrap: wrap; gap: 8px; }
 .irrep-block {
   background: var(--matrix-bg); border: 1px solid var(--border); border-radius: 3px;
-  padding: 12px 14px;
+  padding: 8px 10px;
 }
 .irrep-label {
-  font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; text-align: center;
+  font-size: 1.05rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; text-align: center;
 }
-.partner-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.partner-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .matrix-wrap { display: inline-flex; align-items: center; gap: 2px; }
-.mbr { font-size: 3.4rem; line-height: 1; color: var(--muted); user-select: none; font-weight: 100; }
+.mbr { font-size: 2.6rem; line-height: 1; color: var(--muted); user-select: none; font-weight: 100; }
 .mgrid {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 2px 10px; padding: 4px 6px;
-  font-size: 1rem; font-variant-numeric: tabular-nums;
+  gap: 1px 7px; padding: 3px 4px;
+  font-size: 0.95rem; font-variant-numeric: tabular-nums;
 }
-.mc { text-align: right; min-width: 30px; color: var(--muted); white-space: nowrap; }
+.mc { text-align: right; min-width: 22px; color: var(--muted); white-space: nowrap; }
 .mc.nz { color: var(--gold); }
-.plus-lbl { color: var(--muted); font-size: 1.5rem; align-self: center; }
+.plus-lbl { color: var(--muted); font-size: 1.4rem; align-self: center; }
+/* Irrep whose tensor is purely antisymmetric — forbidden for phonon Raman */
+.irrep-block.irrep-inactive { border-style: dashed; opacity: 0.55; }
+.irrep-inactive .irrep-label { color: var(--muted); }
+.inactive-note {
+  color: var(--muted); font-size: 0.85rem; font-style: italic;
+  text-align: center; line-height: 1.4; padding: 12px 6px 14px;
+}
+.inactive-note span { font-size: 0.78rem; opacity: 0.8; }
 
 /* ─── Parameters ─── */
-.params-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.params-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; }
 .pm {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--card2); border: 1px solid var(--border); padding: 5px 11px; border-radius: 3px;
+  display: flex; align-items: center; gap: 4px;
+  background: var(--card2); border: 1px solid var(--border); padding: 4px 6px; border-radius: 3px;
 }
 .pm-label {
   font-style: italic; color: var(--gold);
@@ -87,25 +161,25 @@ select:focus { outline: none; border-color: var(--hl); }
 .pm-eq { color: var(--muted); font-size: 1rem; }
 .pm-input {
   background: transparent; color: var(--text); border: none;
-  border-bottom: 1px solid var(--border); width: 58px; text-align: center;
+  border-bottom: 1px solid var(--border); width: 100%; min-width: 0; text-align: center;
   padding: 2px; font-size: 1rem; font-variant-numeric: tabular-nums;
 }
 .pm-input:focus { outline: none; border-bottom-color: var(--hl); }
 
 /* ─── Geometry ─── */
-.geo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-.geo-item { display: flex; flex-direction: column; gap: 5px; }
+.geo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.geo-item { display: flex; flex-direction: column; gap: 3px; }
 .geo-label { color: var(--muted); font-size: 1rem; }
 .geo-label strong { color: var(--text); font-style: italic; }
 .geo-input {
   background: var(--card2); color: var(--text); border: 1px solid var(--border);
-  padding: 7px 10px; border-radius: 3px;
+  padding: 6px 10px; border-radius: 3px;
   font-size: 1rem; font-variant-numeric: tabular-nums;
   transition: border-color 0.15s;
 }
 .geo-input:focus { outline: none; border-color: var(--hl); }
 .geo-input.err { border-color: var(--red); }
-.geo-hint { color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; height: 1.4em; }
+.geo-hint { color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; height: 1.25em; }
 .geo-hint.ok { color: var(--green); }
 .theta-row { display: flex; align-items: center; gap: 8px; }
 .theta-row .geo-input { width: 80px; }
@@ -118,13 +192,6 @@ input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none; width: 15px; height: 15px;
   border-radius: 50%; background: var(--hl); cursor: pointer;
 }
-.info-box {
-  background: rgba(128,203,196,0.07); border: 1px solid rgba(128,203,196,0.3);
-  border-radius: 3px; padding: 9px 13px; font-size: 1rem; color: var(--muted);
-  margin-top: 10px;
-}
-.info-box code { color: var(--text); background: var(--card2); padding: 1px 4px; border-radius: 3px; }
-
 /* ─── Results ─── */
 .rtable { width: 100%; border-collapse: collapse; }
 .rtable thead th {
@@ -135,29 +202,24 @@ input[type=range]::-webkit-slider-thumb {
 .rtable tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .rtable tbody tr:last-child td { border-bottom: none; }
 .rtable tbody tr:hover td { background: rgba(255,255,255,0.02); }
-.irep-td { font-weight: 700; color: var(--gold); font-size: 1.2rem; }
-.intensity-td { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
-.bar-bg { background: var(--card2); border-radius: 4px; height: 14px; overflow: hidden; width: 180px; }
-.bar-fg { background: linear-gradient(90deg, var(--hl), var(--teal)); height: 100%; border-radius: 4px; transition: width 0.3s; }
-.pct-td { color: var(--muted); font-size: 1rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.irep-td { font-weight: 700; color: var(--gold); font-size: 1.2rem; white-space: nowrap; }
+.intensity-td { font-size: 1.1rem; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
 .total-row td { background: rgba(128,203,196,0.08); font-weight: 700; color: var(--hl); }
 .err-msg { color: var(--red); font-size: 1rem; padding: 4px 0; }
-.formula-box {
-  background: var(--card2); border-radius: 3px; padding: 10px 14px;
-  font-size: 1rem; font-variant-numeric: tabular-nums; color: var(--muted);
-  margin-top: 8px; word-break: break-all;
-}
-.results-hdr { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
-.results-hdr h2 { margin: 0; }
 .total-sym {
-  font-size: 1.1rem; color: var(--hl);
-  background: rgba(128,203,196,0.1); padding: 3px 12px; border-radius: 20px;
+  font-size: 1.05rem; color: var(--hl);
+  background: rgba(128,203,196,0.1); padding: 3px 12px; border-radius: 12px;
   border: 1px solid rgba(128,203,196,0.3);
+  max-width: 100%; max-height: 4.5em; overflow-y: auto; overflow-wrap: anywhere;
 }
-.sym-td {
-  font-size: 1rem; color: var(--muted);
-  white-space: nowrap; max-width: 260px; overflow: hidden; text-overflow: ellipsis;
-}
+.total-sym::-webkit-scrollbar { width: 6px; }
+.total-sym::-webkit-scrollbar-thumb { background: rgba(128,203,196,0.35); border-radius: 3px; }
+.sym-td { font-size: 1rem; color: var(--muted); line-height: 1.5; }
+/* Low-symmetry groups on a generic Ns can run to thousands of characters —
+   keep the row bounded and let the cell scroll instead of the page. */
+.sym-wrap { max-height: 8.5em; overflow-y: auto; overflow-wrap: anywhere; }
+.sym-wrap::-webkit-scrollbar { width: 6px; }
+.sym-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .sym-zero { color: var(--muted); }
 </style>
 </head>
@@ -168,11 +230,12 @@ input[type=range]::-webkit-slider-thumb {
 
 <h1>Raman Tensor Calculator</h1>
 
-<!-- ─── Point group ─── -->
+<!-- ─── Row A: Raman tensors + tensor parameters ─── -->
+<div class="row2 tensors-row">
 <div class="card">
-  <h2>Crystal Point Group</h2>
-  <div class="pg-row">
-    <select id="pg-select">
+  <div class="hdr-row">
+    <h2>Raman Tensors</h2>
+    <select id="pg-select" aria-label="Crystal point group">
       <optgroup label="Triclinic">
         <option value="C1">C1 (1)</option>
         <option value="Ci">Ci (-1)</option>
@@ -220,19 +283,61 @@ input[type=range]::-webkit-slider-thumb {
         <option value="Oh">Oh (m-3m)</option>
       </optgroup>
     </select>
+    <label class="tgl">
+      <input type="checkbox" id="phonon-tgl" checked>
+      <span class="tgl-track"><span class="tgl-knob"></span></span>
+      <span class="tgl-lbl">Phonon</span>
+    </label>
+    <button class="info-btn" type="button" data-pop="phonon-pop" aria-expanded="false"
+            aria-label="About phonon mode">i</button>
+    <div class="pop" id="phonon-pop" role="dialog" aria-label="Phonon mode" hidden>
+      <strong>Phonon mode — symmetric tensors only.</strong><br>
+      First-order, non-resonant phonon Raman scattering is governed by the derivative of the
+      polarizability, ∂χ<sub>ij</sub>/∂Q. Since χ is symmetric, the Raman tensor must satisfy
+      <code>M = M<sup>T</sup></code> and its antisymmetric part vanishes. Transpose-paired
+      elements are therefore forced equal, and any irrep whose tensor is purely antisymmetric is
+      not phonon-Raman-active at all.<br><br>
+      <span id="phonon-rule"></span><br><br>
+      With the switch on, the forms reduce to the symmetric tensors tabulated on the
+      <a href="https://www.cryst.ehu.eus/cryst/transformtensor.html" target="_blank" rel="noopener">Bilbao
+      Crystallographic Server</a>. Switch it off for the general forms (Cardona), which keep the
+      antisymmetric part — relevant for resonant and electronic Raman scattering, and for magnetic
+      (spin-flip) excitations.
+    </div>
     <span class="pg-note" id="pg-note"></span>
   </div>
-</div>
-
-<!-- ─── Tensor display ─── -->
-<div class="card">
-  <h2>Raman Tensors (symbolic)</h2>
   <div class="tensors-grid" id="tensor-display"></div>
 </div>
 
-<!-- ─── Scattering geometry ─── -->
 <div class="card">
-  <h2>Scattering Geometry</h2>
+  <div class="hdr-row">
+    <h2>Tensor Parameters</h2>
+    <button class="btn" type="button" id="rand-btn">Randomize</button>
+    <button class="btn" type="button" id="reset-btn">Reset</button>
+  </div>
+  <div class="params-row" id="params-grid"></div>
+  <div class="params-note" id="params-note"></div>
+</div>
+</div><!-- /tensors-row -->
+
+<!-- ─── Row B: scattering geometry ─── -->
+<div class="card">
+  <div class="hdr-row">
+    <h2>Scattering Geometry</h2>
+    <button class="info-btn" type="button" data-pop="geo-pop" aria-expanded="false"
+            aria-label="About vector input">i</button>
+    <div class="pop" id="geo-pop" role="dialog" aria-label="Vector input" hidden>
+      <strong>Vector input:</strong> Space-separated components.
+      Supports complex entries: <code>1 i 0</code> (right circular),
+      <code>1 -i 0</code> (left circular), <code>1+2i 0 0</code>, etc.
+      Compact notation also works: <code>100</code>, <code>001</code>, <code>1i0</code>.
+      All vectors are <strong>automatically normalized</strong> to unit length
+      (e.g. <code>1 1 0</code> → [1,1,0]/√2).<br><br>
+      <strong>N<sub>s</sub></strong> is the crystal surface normal — the axis the azimuth
+      angle <strong>θ</strong> rotates about. Entering it auto-fills a perpendicular
+      <strong>e<sub>i</sub></strong> and <strong>e<sub>s</sub></strong> = N<sub>s</sub> × e<sub>i</sub>.
+    </div>
+  </div>
   <div class="geo-grid">
     <div class="geo-item">
       <div class="geo-label">Surface normal <strong>N<sub>s</sub></strong></div>
@@ -258,50 +363,55 @@ input[type=range]::-webkit-slider-thumb {
       <input type="range" id="theta-sl" min="-180" max="180" step="1" value="0">
     </div>
   </div>
-  <div class="info-box">
-    <strong>Vector input:</strong> Space-separated components.
-    Supports complex entries: <code>1 i 0</code> (right circular),
-    <code>1 -i 0</code> (left circular), <code>1+2i 0 0</code>, etc.
-    Compact notation also works: <code>100</code>, <code>001</code>, <code>1i0</code>.
-    All vectors are <strong>automatically normalized</strong> to unit length
-    (e.g. <code>1 1 0</code> → [1,1,0]/√2).
-  </div>
 </div>
 
-<!-- ─── Results ─── -->
+<!-- ─── Row C: results + azimuthal plot ─── -->
+<div class="row2 results-row">
 <div class="card">
-  <div class="results-hdr">
+  <div class="hdr-row">
     <h2>Results</h2>
+    <button class="info-btn" type="button" data-pop="results-pop" aria-expanded="false"
+            aria-label="About the results columns">i</button>
+    <div class="pop" id="results-pop" role="dialog" aria-label="Results columns" hidden>
+      <code>I = |e<sub>s</sub><sup>†</sup> · R<sup>T</sup>(θ) · M · R(θ) · e<sub>i</sub>|²</code>,
+      summed over all partner tensors of a degenerate irrep.<br><br>
+      <strong>Symbolic I(θ)</strong> — the exact closed form for the current point group and
+      <strong>N<sub>s</sub></strong>, <strong>e<sub>i</sub></strong>, <strong>e<sub>s</sub></strong>,
+      as a quadratic form in the tensor parameters with trigonometric θ coefficients.
+      It does <em>not</em> change as you move θ or edit the parameters — only the geometry
+      vectors and the point group change it.<br><br>
+      <strong>I(θ)</strong> — that same expression evaluated at the current parameter values
+      and the current azimuth angle.
+    </div>
     <span class="total-sym" id="total-sym-display"></span>
   </div>
   <div id="err-box" class="err-msg" style="display:none"></div>
   <table class="rtable">
     <thead><tr>
       <th>Irrep</th>
-      <th>Symbolic (current geometry)</th>
-      <th>I = |e<sub>s</sub><sup>†</sup> · R<sup>T</sup>(θ) · M · R(θ) · e<sub>i</sub>|²</th>
-      <th>Relative intensity</th>
-      <th>%</th>
+      <th>Symbolic I(θ)</th>
+      <th style="text-align:right">I(θ)</th>
     </tr></thead>
     <tbody id="results-body"></tbody>
   </table>
 </div>
 
-<!-- ─── Parameters ─── -->
-<div class="card">
-  <h2>Tensor Parameters</h2>
-  <div class="params-row" id="params-grid"></div>
+<div class="card plot-card">
+  <div class="hdr-row">
+    <h2>Azimuthal Angle Dependence</h2>
+    <button class="info-btn" type="button" data-pop="plot-pop" aria-expanded="false"
+            aria-label="About the azimuthal plot">i</button>
+    <div class="pop" id="plot-pop" role="dialog" aria-label="Azimuthal plot" hidden>
+      Raman intensity vs. rotation angle θ about <strong>N<sub>s</sub></strong>, over a full
+      360° turn. The dashed red radial line marks the current θ. All other parameters are
+      fixed at their current values.<br><br>
+      Click a legend entry to hide or show a trace — the choice is remembered when you change
+      parameters, θ, or the scattering vectors.
+    </div>
+  </div>
+  <div id="azimuth-plot" style="height:360px;width:100%;"></div>
 </div>
-
-<!-- ─── Azimuthal plot ─── -->
-<div class="card">
-  <h2>Azimuthal Angle Dependence</h2>
-  <p style="color:var(--muted);font-size:1rem;margin-bottom:12px;">
-    Raman intensity vs. rotation angle θ (−180° to 180°). Dashed vertical line = current θ.
-    All other parameters fixed at current values.
-  </p>
-  <div id="azimuth-plot" style="height:420px;width:100%;"></div>
-</div>
+</div><!-- /results-row -->
 
 <!-- ─── Notes ─── -->
 <div class="card">
@@ -323,6 +433,24 @@ input[type=range]::-webkit-slider-thumb {
     irreps, i.e. A1g, Eg, T1g and T2g of the Oh group, and A1, E, T1 and T2 for Td/O groups. The addition of "g" in the irreps
     of Oh group simply implies the existence of inversion symmetry, and does not change the forms of the Raman tensors of
     the two groups.<br><br>
+  </p>
+  <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
+    <strong style="color:var(--text);">Phonon mode — why the antisymmetric part is not allowed.</strong>
+    The tensors above are the general forms, which permit an antisymmetric part. For first-order,
+    non-resonant <em>phonon</em> Raman scattering that part is forbidden: the scattering amplitude is the
+    derivative of the polarizability with respect to the phonon coordinate, ∂χ<sub>ij</sub>/∂Q, and χ is a
+    symmetric tensor, so the Raman tensor must satisfy <code
+      style="background:var(--card2);padding:1px 5px;border-radius:4px;">M = M<sup>T</sup></code>. Two things
+    follow. Elements that sit at transposed positions are forced equal — for D4h the Eg tensor
+    [[0,0,f],[0,0,0],[g,0,0]] requires f = g — and any irrep whose tensor is purely antisymmetric drops out
+    of the phonon spectrum entirely: A2g in D4h, T1g in Oh, A2g in D3d, A2 in D6h, and the c parameter inside
+    the A/Ag irreps of C4h, C6 and C3. Under these constraints the forms reduce to exactly the symmetric
+    tensors tabulated on the
+    <a href="https://www.cryst.ehu.eus/cryst/transformtensor.html" target="_blank" rel="noopener">Bilbao
+    Crystallographic Server</a> (Raman and Hyper-Raman Tensors). That is what the <strong>Phonon</strong>
+    switch next to the point-group selector does, and it is on by default. Turn it off to recover the general
+    Cardona forms, which are the relevant ones for resonant and electronic Raman scattering and for magnetic
+    (spin-flip) excitations, where an antisymmetric component can appear.<br><br>
   </p>
   <p style="color:var(--muted);font-size:1rem;line-height:1.7;">
     For each point group and scattering plane, there exist a set of light polarization combinations that allows clean
@@ -553,66 +681,188 @@ function computeSymbolicMatrix(irr, pgParamNames, R, ei, es) {
   );
 }
 
-/* Format a coefficient value to a compact string, detecting integers/halves */
-function fmtCoeff(v) {
-  if (v < 0) return '-' + fmtCoeff(-v);
-  // Check common simple values
-  const nice = [1, 2, 3, 4, 5, 6, 0.5, 1.5, 2.5, 3.5, 1/3, 2/3, 4/3, 5/3, 1/4, 3/4];
-  for (const n of nice) {
-    if (Math.abs(v - n) < 5e-6) {
-      // Format as fraction string if not integer
-      if (Math.abs(n - Math.round(n)) < 1e-9) return String(Math.round(n));
-      if (Math.abs(n - 0.5) < 1e-9) return '1/2';
-      if (Math.abs(n - 1.5) < 1e-9) return '3/2';
-      if (Math.abs(n - 2.5) < 1e-9) return '5/2';
-      if (Math.abs(n - 1/3) < 1e-9) return '1/3';
-      if (Math.abs(n - 2/3) < 1e-9) return '2/3';
-      if (Math.abs(n - 4/3) < 1e-9) return '4/3';
-      if (Math.abs(n - 3/4) < 1e-9) return '3/4';
-      if (Math.abs(n - 1/4) < 1e-9) return '1/4';
-      return v.toPrecision(4);
+/* ══════════════════════════════════════════════════════
+   SYMBOLIC θ DEPENDENCE
+
+   R(θ) is linear in {1, cosθ, sinθ}, so the matrix element
+   α = es†·Rᵀ·M·R·ei is a trig polynomial of degree ≤ 2 and
+   I = Σ_k |α_k|² one of degree ≤ 4.  Since α is also linear
+   in the tensor parameters,
+
+       I(θ) = Σ_{p≤q}  param_p · param_q · F_pq(θ)
+
+   with each F_pq a real trig polynomial of degree ≤ 4 that
+   depends only on the point group and on Ns, ei, es — never
+   on θ or on the parameter values.  That is what the
+   "Symbolic I(θ)" column prints.
+
+   A trig polynomial is held as 9 harmonic coefficients:
+       [c0, a1,b1, a2,b2, a3,b3, a4,b4]
+   meaning c0 + Σ_m a_m·cos(mθ) + b_m·sin(mθ).
+══════════════════════════════════════════════════════ */
+const NH = 9;      // harmonic coefficients per polynomial
+const NSAMP = 16;  // DFT samples — exact for harmonics ≤ 7, we need ≤ 4
+
+/* H[p][q] = harmonic coefficients of the quadratic-form entry A_pq(θ). */
+function computeHarmonicMatrix(irr, paramNames, Ns, ei, es) {
+  const N = paramNames.length;
+  const H = Array.from({length: N}, () =>
+            Array.from({length: N}, () => new Array(NH).fill(0)));
+  for (let j = 0; j < NSAMP; j++) {
+    const th = 2 * Math.PI * j / NSAMP;
+    const A = computeSymbolicMatrix(irr, paramNames, buildRotMat(th * 180 / Math.PI, Ns), ei, es);
+    for (let p = 0; p < N; p++) {
+      for (let q = 0; q < N; q++) {
+        const v = A[p][q];
+        H[p][q][0] += v / NSAMP;
+        for (let m = 1; m <= 4; m++) {
+          H[p][q][2*m-1] += 2 * v * Math.cos(m * th) / NSAMP;
+          H[p][q][2*m]   += 2 * v * Math.sin(m * th) / NSAMP;
+        }
+      }
     }
   }
-  return +v.toPrecision(4) + '';
+  return H;
 }
 
-/* Build a human-readable expression string from the A matrix */
-function buildSymExpr(A, paramNames, thr = 1e-7) {
-  const N = paramNames.length;
-  const terms = [];
+/*
+  Harmonics → the *minimal-degree* homogeneous polynomial in c = cosθ, s = sinθ.
+  Even harmonics {0,2,4} map bijectively onto homogeneous forms of degree 4 (or 2, or 0);
+  odd harmonics {1,3} onto degree 3 (or 1).  Taking the smallest degree that carries the
+  highest present harmonic is what makes sin²θ come out as s² and not s²(c²+s²).
+  Returns [{c, i, j}] meaning c·cos^i θ·sin^j θ.
+*/
+function harmToPowers(h, tol) {
+  const out = [];
+  const push = (cs, ij) => cs.forEach((c, k) => {
+    if (Math.abs(c) > tol) out.push({c, i: ij[k][0], j: ij[k][1]});
+  });
 
-  for (let p = 0; p < N; p++) {
-    const c = A[p][p];
-    if (Math.abs(c) < thr) continue;
-    const pn = paramNames[p];
-    const cs = fmtCoeff(Math.abs(c));
-    const sign = c < 0 ? '−' : '+';
-    const expr = cs === '1' ? `${pn}²` : `${cs}${pn}²`;
-    terms.push({sign, expr});
+  const A = h[0], B = h[3], C = h[4], D = h[7], E = h[8];
+  if (Math.abs(D) > tol || Math.abs(E) > tol)
+    push([A+D+B, 2*C+4*E, 2*A-6*D, 2*C-4*E, A+D-B], [[4,0],[3,1],[2,2],[1,3],[0,4]]);
+  else if (Math.abs(B) > tol || Math.abs(C) > tol)
+    push([A+B, 2*C, A-B], [[2,0],[1,1],[0,2]]);
+  else if (Math.abs(A) > tol)
+    push([A], [[0,0]]);
+
+  const a1 = h[1], b1 = h[2], a3 = h[5], b3 = h[6];
+  if (Math.abs(a3) > tol || Math.abs(b3) > tol)
+    push([a1+a3, b1+3*b3, a1-3*a3, b1-b3], [[3,0],[2,1],[1,2],[0,3]]);
+  else if (Math.abs(a1) > tol || Math.abs(b1) > tol)
+    push([a1, b1], [[1,0],[0,1]]);
+
+  return out;
+}
+
+/* Nearest simple rational p/q (q ≤ 256), or null. */
+function ratStr(v, tol) {
+  for (let q = 1; q <= 256; q++) {
+    const p = Math.round(v * q);
+    if (Math.abs(v - p / q) < tol) return q === 1 ? String(p) : `${p}/${q}`;
   }
+  return null;
+}
 
-  for (let p = 0; p < N; p++) {
-    for (let q = p+1; q < N; q++) {
-      const c = A[p][q] + A[q][p]; // symmetric cross term coefficient
-      if (Math.abs(c) < thr) continue;
-      const pn = paramNames[p], qn = paramNames[q];
-      const cs = fmtCoeff(Math.abs(c));
-      const sign = c < 0 ? '−' : '+';
-      const expr = cs === '1' ? `${pn}·${qn}` : `${cs}${pn}·${qn}`;
-      terms.push({sign, expr});
-    }
+/* Compact string for a non-negative coefficient: rational, else k√3 / k√2, else decimal. */
+function fmtCoeff(v) {
+  const tol = 2e-7;
+  let r = ratStr(v, tol);
+  if (r !== null) return r;
+  for (const [sym, val] of [['√3', SQRT3], ['√2', Math.SQRT2]]) {
+    r = ratStr(v / val, tol);
+    if (r === null) continue;
+    const m = r.match(/^(-?\d+)(?:\/(\d+))?$/);
+    const head = m[1] === '1' ? '' : m[1] === '-1' ? '−' : m[1];
+    return head + sym + (m[2] ? '/' + m[2] : '');
   }
+  return String(+v.toPrecision(4));
+}
 
-  if (terms.length === 0) return null; // zero
-  // First term drops the sign if '+'
+const SUP = {2: '²', 3: '³', 4: '⁴'};
+const HNAME = ['1', 'cosθ', 'sinθ', 'cos2θ', 'sin2θ', 'cos3θ', 'sin3θ', 'cos4θ', 'sin4θ'];
+
+function monoName(i, j) {
   let s = '';
-  for (let i = 0; i < terms.length; i++) {
-    if (i === 0) {
-      s = (terms[i].sign === '−' ? '−' : '') + terms[i].expr;
-    } else {
-      s += ' ' + terms[i].sign + ' ' + terms[i].expr;
+  if (i) s += 'cos' + (SUP[i] || '') + 'θ';
+  if (j) s += 'sin' + (SUP[j] || '') + 'θ';
+  return s || '1';
+}
+
+/* Join [{c, b}] into "2cos²θ − 1/2sinθ" (b === '1' means a bare number). */
+function joinTerms(terms) {
+  let s = '';
+  terms.forEach((t, k) => {
+    const unit = Math.abs(Math.abs(t.c) - 1) < 1e-12;
+    const cs = (unit && t.b !== '1') ? '' : fmtCoeff(Math.abs(t.c));
+    const body = t.b === '1' ? cs : cs + t.b;
+    s += (k === 0) ? (t.c < 0 ? '−' : '') + body
+                   : (t.c < 0 ? ' − ' : ' + ') + body;
+  });
+  return s;
+}
+
+/* Render one trig polynomial in its most compact readable form. */
+function renderTrig(h, tol) {
+  const nz = [];
+  for (let k = 0; k < NH; k++) if (Math.abs(h[k]) > tol) nz.push(k);
+  if (!nz.length) return null;
+
+  // constant + a single even cosine of equal magnitude  ⇒  cos²(mθ) or sin²(mθ)
+  if (nz.length === 2 && nz[0] === 0 && (nz[1] === 3 || nz[1] === 7)) {
+    const A = h[0], B = h[nz[1]];
+    if (Math.abs(Math.abs(A) - Math.abs(B)) < tol) {
+      const m  = nz[1] === 3 ? '' : '2';
+      const fn = B / A > 0 ? 'cos' : 'sin';
+      const sc = 2 * A;
+      const pre = (sc < 0 ? '−' : '') +
+                  (Math.abs(Math.abs(sc) - 1) < 1e-12 ? '' : fmtCoeff(Math.abs(sc)));
+      return `${pre}${fn}²${m}θ`;
     }
   }
+
+  // otherwise keep whichever of the two canonical forms has fewer terms
+  const harm = nz.map(k => ({c: h[k], b: HNAME[k]}));
+  const powr = harmToPowers(h, tol).map(t => ({c: t.c, b: monoName(t.i, t.j)}));
+  return joinTerms(powr.length <= harm.length ? powr : harm);
+}
+
+/* Attach a rendered trig factor to a parameter product, e.g. "d²cos²2θ", "4a²", "a·b(…)". */
+function attachFactor(pname, f) {
+  if (f === '1') return {neg: false, s: pname};
+  if (/ [+−] /.test(f)) return {neg: false, s: `${pname}(${f})`};  // multi-term: sign stays inside
+  const neg = f.startsWith('−');
+  const g = neg ? f.slice(1) : f;
+  if (!/(cos|sin)/.test(g)) return {neg, s: (g.includes('/') ? g + '·' : g) + pname};  // pure number
+  if (/^(cos|sin)/.test(g)) return {neg, s: pname + g};                                // bare monomial
+  return {neg, s: `${pname}(${g})`};                                                   // coeff + monomial
+}
+
+/* Full expression:  Σ_{p≤q} param_p·param_q·F_pq(θ) */
+function buildSymExprTheta(H, paramNames) {
+  const N = paramNames.length;
+  let mx = 0;
+  for (let p = 0; p < N; p++)
+    for (let q = 0; q < N; q++)
+      for (let k = 0; k < NH; k++) mx = Math.max(mx, Math.abs(H[p][q][k]));
+  const tol = Math.max(1e-12, mx * 1e-9);
+
+  const parts = [];
+  for (let p = 0; p < N; p++) {
+    const f = renderTrig(H[p][p], tol);
+    if (f) parts.push(attachFactor(`${paramNames[p]}²`, f));
+  }
+  for (let p = 0; p < N; p++) {
+    for (let q = p + 1; q < N; q++) {
+      const h = H[p][q].map((v, k) => v + H[q][p][k]); // symmetric cross term
+      const f = renderTrig(h, tol);
+      if (f) parts.push(attachFactor(`${paramNames[p]}·${paramNames[q]}`, f));
+    }
+  }
+  if (!parts.length) return null; // zero
+
+  let s = (parts[0].neg ? '−' : '') + parts[0].s;
+  for (let k = 1; k < parts.length; k++) s += (parts[k].neg ? ' − ' : ' + ') + parts[k].s;
   return s;
 }
 
@@ -1020,6 +1270,119 @@ const PG_ALL = {
 };
 
 /* ══════════════════════════════════════════════════════
+   PHONON MODE — symmetric Raman tensors
+
+   For first-order, non-resonant phonon Raman the scattering
+   goes as ∂χ_ij/∂Q with χ symmetric, so M = Mᵀ: the
+   antisymmetric part is forbidden.  The constraints that
+   imposes are read straight off each irrep's `sym` strings,
+   never hard-coded, by comparing every entry with its
+   transpose partner:
+
+     same letter, opposite sign  →  that parameter must be 0
+     different letters           →  the two are tied equal
+
+   The reduced forms are those tabulated on the Bilbao
+   Crystallographic Server.
+══════════════════════════════════════════════════════ */
+let PHONON = true;
+
+/* "−√3b" → {neg:true, coeff:"√3", letter:"b"};  "0" → null */
+function parseEntry(s) {
+  if (s === '0') return null;
+  const m = s.match(/^(−?)(.*)([a-i])$/);
+  return m ? { neg: m[1] === '−', coeff: m[2], letter: m[3] } : null;
+}
+
+const _phononCache = {};
+function phononConstraints(fam) {
+  if (_phononCache[fam]) return _phononCache[fam];
+  const pg = PG[fam];
+  const zero = new Set();
+  const parent = {};
+  for (const p of pg.params) parent[p] = p;
+  const find = x => { while (parent[x] !== x) x = parent[x] = parent[parent[x]]; return x; };
+  const union = (x, y) => {
+    const rx = find(x), ry = find(y);
+    if (rx === ry) return;
+    // representative = whichever comes first in pg.params
+    const keep = pg.params.indexOf(rx) <= pg.params.indexOf(ry) ? rx : ry;
+    parent[keep === rx ? ry : rx] = keep;
+  };
+
+  for (const irr of pg.irreps)
+    for (const M of irr.sym)
+      for (let i = 0; i < 3; i++)
+        for (let j = i + 1; j < 3; j++) {
+          const A = parseEntry(M[i][j]), B = parseEntry(M[j][i]);
+          if (!A && !B) continue;
+          if (!A || !B) { zero.add((A || B).letter); continue; }   // x = 0
+          if (A.letter === B.letter) {
+            if (A.neg !== B.neg) zero.add(A.letter);               // purely antisymmetric
+            continue;
+          }
+          // different letters: tie them, unless sign/coefficient disagree (would need x = −y,
+          // which does not occur in this database — zero both rather than assert a wrong tie)
+          if (A.neg !== B.neg || A.coeff !== B.coeff) { zero.add(A.letter); zero.add(B.letter); }
+          else union(A.letter, B.letter);
+        }
+
+  for (const p of pg.params) if (zero.has(find(p))) zero.add(p);   // zeroed rep zeroes its class
+  const alias = new Map();
+  for (const p of pg.params) {
+    const r = find(p);
+    if (r !== p && !zero.has(p)) alias.set(p, r);
+  }
+  return _phononCache[fam] = { zero, alias };
+}
+
+/* Full a–i parameter object from the independent ones (identity when phonon mode is off).
+   Linear in its argument, which is what keeps the symbolic engine valid. */
+function expandParams(fam, indep) {
+  if (!PHONON) return indep;
+  const { zero, alias } = phononConstraints(fam);
+  const out = { ...indep };
+  for (const [dep, rep] of alias) out[dep] = indep[rep] !== undefined ? indep[rep] : 0;
+  for (const z of zero) out[z] = 0;
+  return out;
+}
+
+/* The point group as the rest of the app should see it under the current mode. */
+function effectiveView(pgKey) {
+  const fam = PG_ALL[pgKey].family;
+  const pg = PG[fam];
+  if (!PHONON) return { fam, params: pg.params, irreps: pg.irreps };
+  const { zero, alias } = phononConstraints(fam);
+  return {
+    fam,
+    params: pg.params.filter(p => !zero.has(p) && !alias.has(p)),
+    irreps: pg.irreps.map(irr => ({ label: irr.label, mat: p => irr.mat(expandParams(fam, p)) }))
+  };
+}
+
+/* Rewrite one display entry under the constraints: alias → representative, zeroed → "0" */
+function phononEntry(s, c) {
+  const e = parseEntry(s);
+  if (!e) return s;
+  if (c.zero.has(e.letter)) return '0';
+  const rep = c.alias.get(e.letter);
+  return rep ? (e.neg ? '−' : '') + e.coeff + rep : s;
+}
+
+/* Human-readable constraint list, e.g. "f = g, c = 0" */
+function phononRuleText(fam) {
+  const { zero, alias } = phononConstraints(fam);
+  const byRep = new Map();
+  for (const [dep, rep] of alias) {
+    if (!byRep.has(rep)) byRep.set(rep, []);
+    byRep.get(rep).push(dep);
+  }
+  const parts = [...byRep].map(([rep, deps]) => [rep, ...deps].join(' = '));
+  if (zero.size) parts.push([...zero].join(' = ') + ' = 0');
+  return parts.join(', ');
+}
+
+/* ══════════════════════════════════════════════════════
    UI BUILDERS
 ══════════════════════════════════════════════════════ */
 function buildMatrix(rows, label) {
@@ -1034,25 +1397,33 @@ function buildTensorDisplay(pgKey) {
   const pgEntry = PG_ALL[pgKey];
   const pg = PG[pgEntry.family];
   const labels = pgEntry.labels;
+  const c = PHONON ? phononConstraints(pgEntry.family) : null;
   const el = document.getElementById('tensor-display');
   let html = '';
   pg.irreps.forEach((irr, ii) => {
     const lbl = labels[ii];
-    let mats = '';
-    irr.sym.forEach((m, idx) => {
-      if (idx > 0) mats += '<span class="plus-lbl">+</span>';
-      mats += buildMatrix(m, lbl);
+    const mats = c ? irr.sym.map(m => m.map(row => row.map(v => phononEntry(v, c)))) : irr.sym;
+    // A purely antisymmetric irrep reduces to nothing at all
+    if (mats.every(m => m.every(row => row.every(v => v === '0')))) {
+      html += `<div class="irrep-block irrep-inactive"><div class="irrep-label">${lbl}</div>
+        <div class="inactive-note">not phonon-active<br><span>antisymmetric only</span></div></div>`;
+      return;
+    }
+    let s = '';
+    mats.forEach((m, idx) => {
+      if (idx > 0) s += '<span class="plus-lbl">+</span>';
+      s += buildMatrix(m, lbl);
     });
-    html += `<div class="irrep-block"><div class="irrep-label">${lbl}</div><div class="partner-row">${mats}</div></div>`;
+    html += `<div class="irrep-block"><div class="irrep-label">${lbl}</div><div class="partner-row">${s}</div></div>`;
   });
   el.innerHTML = html;
 }
 
 function buildParams(pgKey) {
-  const pg = PG[PG_ALL[pgKey].family];
+  const names = effectiveView(pgKey).params;
   const el = document.getElementById('params-grid');
   let html = '';
-  for (const p of pg.params) {
+  for (const p of names) {
     const defaultVal = getCurrentParams()[p] !== undefined ? getCurrentParams()[p] : 1;
     html += `<div class="pm">
       <span class="pm-label">${p}</span>
@@ -1062,22 +1433,49 @@ function buildParams(pgKey) {
   }
   el.innerHTML = html;
   // Re-attach listeners
-  for (const p of pg.params) {
+  for (const p of names) {
     document.getElementById(`param-${p}`).addEventListener('input', compute);
   }
+  // Caption stating the constraints the dropped parameters are under
+  const noteEl = document.getElementById('params-note');
+  const rule = PHONON ? phononRuleText(PG_ALL[pgKey].family) : '';
+  noteEl.innerHTML = rule ? `phonon mode: <b>${rule}</b>` : '';
 }
 
-// Store previous param values to preserve across group switches
+// Store previous param values to preserve across group / mode switches
 let _savedParams = {};
 function getCurrentParams() { return _savedParams; }
 function readParams(pgKey) {
-  const pg = PG[PG_ALL[pgKey].family];
   const out = {};
-  for (const p of pg.params) {
+  for (const p of effectiveView(pgKey).params) {
     const el = document.getElementById(`param-${p}`);
     out[p] = el ? parseFloat(el.value) || 0 : (_savedParams[p] !== undefined ? _savedParams[p] : 1);
   }
   return out;
+}
+
+/* ─── Randomize / Reset ─── */
+function randomizeParams() {
+  const names = effectiveView(document.getElementById('pg-select').value).params;
+  // distinct draws from {0.1, 0.2, … 10.0} — partial Fisher-Yates, at most 9 needed
+  const pool = Array.from({length: 100}, (_, i) => (i + 1) / 10);
+  for (let i = 0; i < names.length; i++) {
+    const j = i + Math.floor(Math.random() * (pool.length - i));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  names.forEach((p, i) => {
+    const el = document.getElementById(`param-${p}`);
+    if (el) el.value = pool[i].toFixed(1);
+  });
+  compute();
+}
+
+function resetParams() {
+  for (const p of effectiveView(document.getElementById('pg-select').value).params) {
+    const el = document.getElementById(`param-${p}`);
+    if (el) el.value = 1;
+  }
+  compute();
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1112,6 +1510,9 @@ function readVec(inputId, hintId) {
 /* ══════════════════════════════════════════════════════
    MAIN COMPUTATION
 ══════════════════════════════════════════════════════ */
+/* Cached symbolic expressions, keyed by point group + Ns/ei/es */
+let _symCache = { key: null, syms: [], total: '0' };
+
 function compute() {
   const pgKey = document.getElementById('pg-select').value;
   const params = readParams(pgKey);
@@ -1134,57 +1535,55 @@ function compute() {
 
   const R = buildRotMat(thetaDeg, Ns);
   const pgEntry = PG_ALL[pgKey];
-  const pg = PG[pgEntry.family];
   const labels = pgEntry.labels;
-  const N = pg.params.length;
+  const eff = effectiveView(pgKey);   // parameters and tensors under the current mode
+  const N = eff.params.length;
 
-  const rows = [];
-  let total = 0;
-  // Accumulate total A matrix for the symbolic sum
-  const totalA = Array.from({length: N}, () => new Array(N).fill(0));
-
-  pg.irreps.forEach((irr, ii) => {
-    const matrices = irr.mat(params);
-    let Iirr = 0;
-    for (const M of matrices) Iirr += intensity(M, R, ei, es);
-
-    // Symbolic
-    const A = computeSymbolicMatrix(irr, pg.params, R, ei, es);
-    const sym = buildSymExpr(A, pg.params) || '0';
-    for (let p = 0; p < N; p++)
-      for (let q = 0; q < N; q++)
-        totalA[p][q] += A[p][q];
-
-    rows.push({ label: labels[ii], I: Iirr, sym });
-    total += Iirr;
-  });
-
-  // Total symbolic expression
-  const totalSym = buildSymExpr(totalA, pg.params) || '0';
+  // ── Symbolic θ expressions.  These depend only on the point group, the mode
+  //    and Ns/ei/es, so they are cached: editing a parameter or dragging θ
+  //    leaves the Symbolic column untouched (and skips the work entirely).
+  const symKey = pgKey + '|' + (PHONON ? 'ph' : 'gen') + '|' +
+                 [Ns, ei, es].map(v => v.map(c => c.join()).join(';')).join('|');
+  if (_symCache.key !== symKey) {
+    const totalH = Array.from({length: N}, () =>
+                   Array.from({length: N}, () => new Array(NH).fill(0)));
+    const syms = eff.irreps.map(irr => {
+      const H = computeHarmonicMatrix(irr, eff.params, Ns, ei, es);
+      for (let p = 0; p < N; p++)
+        for (let q = 0; q < N; q++)
+          for (let k = 0; k < NH; k++) totalH[p][q][k] += H[p][q][k];
+      return buildSymExprTheta(H, eff.params) || '0';
+    });
+    _symCache = { key: symKey, syms, total: buildSymExprTheta(totalH, eff.params) || '0' };
+  }
+  const totalSym = _symCache.total;
   document.getElementById('total-sym-display').textContent = 'I = ' + totalSym;
 
-  // Build result table
+  // ── Numeric intensities at the current θ and parameter values
+  const rows = eff.irreps.map((irr, ii) => {
+    let Iirr = 0;
+    for (const M of irr.mat(params)) Iirr += intensity(M, R, ei, es);
+    return { label: labels[ii], I: Math.max(0, Iirr), sym: _symCache.syms[ii] };
+  });
+  const total = rows.reduce((s, r) => s + r.I, 0);
+  const maxI = rows.reduce((m, r) => Math.max(m, r.I), 0);
+  // Round floating-point dust down to a clean 0
+  const numFmt = v => (v < 1e-12 * Math.max(1, maxI)) ? '0' : v.toPrecision(6);
+
   const tbody = document.getElementById('results-body');
   let html = '';
-  const maxI = rows.reduce((m, r) => Math.max(m, r.I), 0);
   for (const row of rows) {
-    const pct = total > 1e-14 ? (row.I / total * 100).toFixed(1) : '0.0';
-    const barW = maxI > 1e-14 ? Math.round(row.I / maxI * 100) : 0;
     const symClass = row.sym === '0' ? 'sym-td sym-zero' : 'sym-td';
     html += `<tr>
       <td class="irep-td">${row.label}</td>
-      <td class="${symClass}">${row.sym}</td>
-      <td class="intensity-td">${row.I.toPrecision(6)}</td>
-      <td><div class="bar-bg"><div class="bar-fg" style="width:${barW}%"></div></div></td>
-      <td class="pct-td">${pct}%</td>
+      <td class="${symClass}"><div class="sym-wrap">${row.sym}</div></td>
+      <td class="intensity-td">${numFmt(row.I)}</td>
     </tr>`;
   }
   html += `<tr class="total-row">
     <td>Total</td>
-    <td class="sym-td">${totalSym}</td>
-    <td class="intensity-td">${total.toPrecision(6)}</td>
-    <td></td>
-    <td class="pct-td">100%</td>
+    <td class="sym-td"><div class="sym-wrap">${totalSym}</div></td>
+    <td class="intensity-td">${numFmt(total)}</td>
   </tr>`;
   tbody.innerHTML = html;
 
@@ -1200,23 +1599,27 @@ const PLOT_COLORS = [
   '#d2a8ff','#ff9c7d','#7ee787','#ffa657','#db61a2'
 ];
 
+/* Legend visibility, keyed by irrep label / 'Total' / '__theta__' */
+let _traceVis = {};
+let _plotBound = false;
+
 function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
   const pgEntry = PG_ALL[pgKey];
-  const pg = PG[pgEntry.family];
   const labels = pgEntry.labels;
+  const eff = effectiveView(pgKey);
   // Use 0–360 for a clean closed polar curve
   const thetas = [];
   for (let t = 0; t <= 360; t += 1) thetas.push(t);
   const nT = thetas.length;
 
-  const irrepVals = pg.irreps.map(() => new Float64Array(nT));
+  const irrepVals = eff.irreps.map(() => new Float64Array(nT));
   const totalVals = new Float64Array(nT);
 
   for (let ti = 0; ti < nT; ti++) {
     const R = buildRotMat(thetas[ti], Ns);
     let tot = 0;
-    for (let ii = 0; ii < pg.irreps.length; ii++) {
-      const irr = pg.irreps[ii];
+    for (let ii = 0; ii < eff.irreps.length; ii++) {
+      const irr = eff.irreps[ii];
       const mats = irr.mat(params);
       let v = 0;
       for (const M of mats) v += intensity(M, R, ei, es);
@@ -1228,13 +1631,16 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
 
   const maxY = Math.max(...totalVals);
 
-  // Per-irrep polar traces
-  const traces = pg.irreps.map((irr, ii) => ({
+  // Per-irrep polar traces.  `meta.k` is a stable key so that a legend toggle
+  // survives every re-render (Plotly.react would otherwise reset `visible`).
+  const traces = eff.irreps.map((irr, ii) => ({
     type: 'scatterpolar',
     mode: 'lines',
     r: Array.from(irrepVals[ii]),
     theta: thetas,
     name: labels[ii],
+    meta: { k: labels[ii] },
+    visible: _traceVis[labels[ii]] ?? true,
     line: { color: PLOT_COLORS[ii % PLOT_COLORS.length], width: 1.8 }
   }));
 
@@ -1243,16 +1649,21 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
     type: 'scatterpolar', mode: 'lines',
     r: Array.from(totalVals), theta: thetas,
     name: 'Total',
+    meta: { k: 'Total' },
+    visible: _traceVis['Total'] ?? true,
     line: { color: '#ffffff', width: 2.5 }
   });
 
-  // Current theta marker – radial line from origin to edge
+  // Current theta marker – radial line from origin to edge.  Its display name
+  // changes with θ, so it needs a key of its own to stay hidden once hidden.
   const tCur = ((currentTheta % 360) + 360) % 360; // normalise to 0–360
   traces.push({
     type: 'scatterpolar', mode: 'lines',
     r: [0, maxY * 1.08 || 1],
     theta: [tCur, tCur],
     name: 'θ = ' + (currentTheta || 0) + '°',
+    meta: { k: '__theta__' },
+    visible: _traceVis['__theta__'] ?? true,
     line: { color: '#f85149', width: 1.5, dash: 'dash' },
     showlegend: true
   });
@@ -1287,7 +1698,18 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
     margin: { t: 40, r: 20, b: 40, l: 20 }
   };
 
-  Plotly.react('azimuth-plot', traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+  const gd = document.getElementById('azimuth-plot');
+  Plotly.react(gd, traces, layout, { responsive: true, displayModeBar: true, displaylogo: false });
+
+  // Record legend toggles once the graph div exists
+  if (!_plotBound) {
+    _plotBound = true;
+    gd.on('plotly_restyle', () => {
+      (gd.data || []).forEach(t => {
+        if (t.meta && t.meta.k) _traceVis[t.meta.k] = (t.visible === undefined ? true : t.visible);
+      });
+    });
+  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1352,12 +1774,51 @@ function onPGChange() {
     if (_savedParams[p] === undefined) _savedParams[p] = 1;
   }
 
-  document.getElementById('pg-note').innerHTML = pgEntry.note || '';
+  const noteEl = document.getElementById('pg-note');
+  noteEl.innerHTML = pgEntry.note || '';
+  noteEl.title = pgEntry.note || '';   // full text on hover; the line itself truncates
+
+  // Constraints for this group, shown inside the phonon-mode popover
+  const rule = phononRuleText(pgEntry.family);
+  const { zero } = phononConstraints(pgEntry.family);
+  const deadLabels = pg.irreps
+    .map((irr, ii) => irr.sym.every(m => m.every(r => r.every(v => {
+      const e = parseEntry(v); return !e || zero.has(e.letter);
+    }))) ? pgEntry.labels[ii] : null)
+    .filter(Boolean);
+  let ruleHtml = `<strong>${pgKey}:</strong> `;
+  ruleHtml += rule ? `a phonon requires <b style="color:var(--gold)">${rule}</b>.` : 'no reduction — the tensors are already symmetric.';
+  if (deadLabels.length)
+    ruleHtml += ` ${deadLabels.join(', ')} ${deadLabels.length > 1 ? 'are' : 'is'} purely antisymmetric and therefore not phonon-Raman-active.`;
+  document.getElementById('phonon-rule').innerHTML = ruleHtml;
 
   buildTensorDisplay(pgKey);
   buildParams(pgKey);
   compute();
 }
+
+/* ─── "i" info popovers ─── */
+function closePops(except) {
+  for (const pop of document.querySelectorAll('.pop')) {
+    if (pop === except) continue;
+    pop.hidden = true;
+    const btn = document.querySelector(`.info-btn[data-pop="${pop.id}"]`);
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+}
+document.addEventListener('click', ev => {
+  const btn = ev.target.closest && ev.target.closest('.info-btn');
+  if (btn) {
+    const pop = document.getElementById(btn.dataset.pop);
+    const show = pop.hidden;
+    closePops(show ? pop : null);
+    pop.hidden = !show;
+    btn.setAttribute('aria-expanded', String(show));
+    return;
+  }
+  if (!(ev.target.closest && ev.target.closest('.pop'))) closePops(null);
+});
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') closePops(null); });
 
 const thetaIn = document.getElementById('theta-in');
 const thetaSl = document.getElementById('theta-sl');
@@ -1372,6 +1833,12 @@ thetaSl.addEventListener('input', () => {
 });
 
 document.getElementById('pg-select').addEventListener('change', onPGChange);
+document.getElementById('phonon-tgl').addEventListener('change', ev => {
+  PHONON = ev.target.checked;
+  onPGChange();   // tensor forms and the parameter list both depend on the mode
+});
+document.getElementById('rand-btn').addEventListener('click', randomizeParams);
+document.getElementById('reset-btn').addEventListener('click', resetParams);
 document.getElementById('Ns-in').addEventListener('input', () => {
   autoFillPolarizations();
   compute();
