@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Raman Tensor Calculator</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>try{var t=localStorage.getItem('seankung-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <style>
 /* Shared site theme (matches seankung.ca) */
 :root {
@@ -31,7 +32,7 @@ body {
   line-height: 1.6;
 }
 a { color: var(--hl); }
-a:hover { color: #a7dbd6; text-decoration: underline; }
+a:hover { color: var(--hl-hover); text-decoration: underline; }
 
 .container { max-width: 1400px; margin: 0 auto; padding: 14px 16px 40px; }
 .home-link { font-size: 0.9rem; margin-bottom: 2px; }
@@ -70,8 +71,8 @@ h2 { font-size: 1rem; color: var(--hl); text-transform: uppercase; letter-spacin
   padding: 3px 10px; border-radius: 3px; font-size: 0.9rem;
   font-family: Arial, sans-serif; cursor: pointer; white-space: nowrap;
 }
-.btn:hover { border-color: var(--hl); background: rgba(128,203,196,0.1); }
-.btn:active { background: rgba(128,203,196,0.2); }
+.btn:hover { border-color: var(--hl); background: rgba(var(--hl-rgb),0.1); }
+.btn:active { background: rgba(var(--hl-rgb),0.2); }
 
 .tgl { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; }
 .tgl input { position: absolute; opacity: 0; width: 0; height: 0; }
@@ -83,7 +84,7 @@ h2 { font-size: 1rem; color: var(--hl); text-transform: uppercase; letter-spacin
   position: absolute; top: 1px; left: 1px; width: 12px; height: 12px; border-radius: 50%;
   background: var(--muted); transition: transform 0.15s, background 0.15s;
 }
-.tgl input:checked + .tgl-track { background: rgba(128,203,196,0.25); border-color: var(--hl); }
+.tgl input:checked + .tgl-track { background: rgba(var(--hl-rgb),0.25); border-color: var(--hl); }
 .tgl input:checked + .tgl-track .tgl-knob { transform: translateX(14px); background: var(--hl); }
 .tgl input:focus-visible + .tgl-track { outline: 2px solid var(--hl); outline-offset: 2px; }
 .tgl-lbl { color: var(--muted); font-size: 0.9rem; }
@@ -100,7 +101,7 @@ h2 { font-size: 1rem; color: var(--hl); text-transform: uppercase; letter-spacin
   width: max-content; max-width: min(560px, 88vw);
   background: var(--card2); border: 1px solid var(--hl); border-radius: 4px;
   padding: 12px 14px; font-size: 1rem; color: var(--muted); line-height: 1.6;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.65); white-space: normal;
+  box-shadow: var(--pop-shadow); white-space: normal;
 }
 .pop[hidden] { display: none; }
 .pop code { color: var(--text); background: var(--card); padding: 1px 4px; border-radius: 3px; }
@@ -201,19 +202,19 @@ input[type=range]::-webkit-slider-thumb {
 }
 .rtable tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .rtable tbody tr:last-child td { border-bottom: none; }
-.rtable tbody tr:hover td { background: rgba(255,255,255,0.02); }
+.rtable tbody tr:hover td { background: rgba(var(--fg-rgb),0.02); }
 .irep-td { font-weight: 700; color: var(--gold); font-size: 1.2rem; white-space: nowrap; }
 .intensity-td { font-size: 1.1rem; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
-.total-row td { background: rgba(128,203,196,0.08); font-weight: 700; color: var(--hl); }
+.total-row td { background: rgba(var(--hl-rgb),0.08); font-weight: 700; color: var(--hl); }
 .err-msg { color: var(--red); font-size: 1rem; padding: 4px 0; }
 .total-sym {
   font-size: 1.05rem; color: var(--hl);
-  background: rgba(128,203,196,0.1); padding: 3px 12px; border-radius: 12px;
-  border: 1px solid rgba(128,203,196,0.3);
+  background: rgba(var(--hl-rgb),0.1); padding: 3px 12px; border-radius: 12px;
+  border: 1px solid rgba(var(--hl-rgb),0.3);
   max-width: 100%; max-height: 4.5em; overflow-y: auto; overflow-wrap: anywhere;
 }
 .total-sym::-webkit-scrollbar { width: 6px; }
-.total-sym::-webkit-scrollbar-thumb { background: rgba(128,203,196,0.35); border-radius: 3px; }
+.total-sym::-webkit-scrollbar-thumb { background: rgba(var(--hl-rgb),0.35); border-radius: 3px; }
 .sym-td { font-size: 1rem; color: var(--muted); line-height: 1.5; }
 /* Low-symmetry groups on a generic Ns can run to thousands of characters —
    keep the row bounded and let the cell scroll instead of the page. */
@@ -221,9 +222,16 @@ input[type=range]::-webkit-slider-thumb {
 .sym-wrap::-webkit-scrollbar { width: 6px; }
 .sym-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 .sym-zero { color: var(--muted); }
+:root{color-scheme:dark}
+:root{--hl-rgb:128,203,196;--fg-rgb:255,255,255;--hl-hover:#a7dbd6;--dim:#aaa;--pop-shadow:0 8px 24px rgba(0,0,0,0.65)}
+:root[data-theme="light"]{color-scheme:light;--bg:#f4f6f7;--card:#ffffff;--card2:#eef1f3;--accent:#e0f2f1;--hl:#00796b;--gold:#9a6700;--red:#cf222e;--green:#1a7f37;--teal:#1a7f37;--text:#1b1f23;--muted:#4a5560;--border:#d0d5da;--matrix-bg:#eef1f3;--hl-rgb:0,121,107;--fg-rgb:0,0,0;--hl-hover:#004d40;--dim:#66727d;--pop-shadow:0 8px 24px rgba(0,0,0,0.18)}
+.theme-toggle{position:absolute;top:10px;right:14px;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:16px;line-height:1;z-index:50}
+.theme-toggle:hover{border-color:var(--hl)}
+.home-link{padding-right:46px}   /* keep the nav line clear of the theme button */
 </style>
 </head>
 <body>
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme"></button>
 <div class="container">
 
 <nav class="home-link"><a href="https://seankung.ca/">&larr; seankung.ca</a></nav>
@@ -1594,16 +1602,25 @@ function compute() {
 /* ══════════════════════════════════════════════════════
    PLOTLY AZIMUTHAL PLOT
 ══════════════════════════════════════════════════════ */
-const PLOT_COLORS = [
+const PLOT_COLORS_DARK = [
   '#80cbc4','#e3b341','#58a6ff','#3fb950','#f85149',
   '#d2a8ff','#ff9c7d','#7ee787','#ffa657','#db61a2'
 ];
+const PLOT_COLORS_LIGHT = [          // the same hues, dark enough to read on a white plot
+  '#00796b','#9a6700','#0969da','#1a7f37','#cf222e',
+  '#8250df','#bc4c00','#116329','#953800','#bf3989'
+];
+const isLightTheme = () => document.documentElement.getAttribute('data-theme') === 'light';
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let _lastPlotArgs = null;            // so the figure can be redrawn when the theme changes
 
 /* Legend visibility, keyed by irrep label / 'Total' / '__theta__' */
 let _traceVis = {};
 let _plotBound = false;
 
 function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
+  _lastPlotArgs = [pgKey, params, Ns, ei, es, currentTheta];
+  const PLOT_COLORS = isLightTheme() ? PLOT_COLORS_LIGHT : PLOT_COLORS_DARK;
   const pgEntry = PG_ALL[pgKey];
   const labels = pgEntry.labels;
   const eff = effectiveView(pgKey);
@@ -1651,7 +1668,7 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
     name: 'Total',
     meta: { k: 'Total' },
     visible: _traceVis['Total'] ?? true,
-    line: { color: '#ffffff', width: 2.5 }
+    line: { color: cssv('--text'), width: 2.5 }
   });
 
   // Current theta marker – radial line from origin to edge.  Its display name
@@ -1664,35 +1681,35 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
     name: 'θ = ' + (currentTheta || 0) + '°',
     meta: { k: '__theta__' },
     visible: _traceVis['__theta__'] ?? true,
-    line: { color: '#f85149', width: 1.5, dash: 'dash' },
+    line: { color: cssv('--red'), width: 1.5, dash: 'dash' },
     showlegend: true
   });
 
   const layout = {
-    paper_bgcolor: '#1e1e1e',
-    font: { color: '#ccc', family: "Arial, sans-serif", size: 14 },
+    paper_bgcolor: cssv('--card'),
+    font: { color: cssv('--muted'), family: "Arial, sans-serif", size: 14 },
     polar: {
-      bgcolor: '#121212',
+      bgcolor: cssv('--bg'),
       radialaxis: {
         visible: true,
-        gridcolor: '#333',
-        linecolor: '#333',
-        tickcolor: '#aaa',
-        tickfont: { color: '#aaa', size: 13 },
+        gridcolor: cssv('--border'),
+        linecolor: cssv('--border'),
+        tickcolor: cssv('--dim'),
+        tickfont: { color: cssv('--dim'), size: 13 },
         rangemode: 'tozero'
       },
       angularaxis: {
-        gridcolor: '#333',
-        linecolor: '#333',
-        tickcolor: '#aaa',
-        tickfont: { color: '#aaa', size: 13 },
+        gridcolor: cssv('--border'),
+        linecolor: cssv('--border'),
+        tickcolor: cssv('--dim'),
+        tickfont: { color: cssv('--dim'), size: 13 },
         direction: 'counterclockwise',
         rotation: 0,
         dtick: 30
       }
     },
     legend: {
-      bgcolor: 'rgba(0,0,0,0)', bordercolor: '#333',
+      bgcolor: 'rgba(0,0,0,0)', bordercolor: cssv('--border'),
       borderwidth: 1, font: { size: 13 }
     },
     margin: { t: 40, r: 20, b: 40, l: 20 }
@@ -1711,6 +1728,8 @@ function plotAzimuthal(pgKey, params, Ns, ei, es, currentTheta) {
     });
   }
 }
+
+window.addEventListener('themechange', () => { if (_lastPlotArgs) plotAzimuthal(..._lastPlotArgs); });
 
 /* ══════════════════════════════════════════════════════
    EVENT LISTENERS & INIT
@@ -1849,6 +1868,31 @@ for (const id of ['ei-in','es-in']) {
 
 // Init
 onPGChange();
+</script>
+<script>
+/* dark / light switch: saved under one key, shared by every page on seankung.ca */
+(function () {
+  var root = document.documentElement, btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  function cur() { return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+  function paint() {
+    var light = cur() === 'light';
+    btn.textContent = light ? '\u263E' : '\u2600';
+    btn.title = light ? 'Switch to dark theme' : 'Switch to light theme';
+    btn.setAttribute('aria-label', btn.title);
+  }
+  function set(t, save) {
+    root.setAttribute('data-theme', t);
+    if (save) try { localStorage.setItem('seankung-theme', t); } catch (e) { /* private mode: the choice just is not remembered */ }
+    paint();
+    window.dispatchEvent(new Event('themechange'));
+  }
+  btn.addEventListener('click', function () { set(cur() === 'light' ? 'dark' : 'light', true); });
+  window.addEventListener('storage', function (e) {          // another tab changed it
+    if (e.key === 'seankung-theme' && (e.newValue === 'light' || e.newValue === 'dark') && e.newValue !== cur()) set(e.newValue, false);
+  });
+  paint();
+})();
 </script>
 </body>
 </html>
